@@ -3,9 +3,10 @@
 
 Camera::Camera(unsigned int width, unsigned int height)
     : m_Width(width), m_Height(height),
+      m_Scale(1.0f, 1.0f),
       m_Position(width/2.0f, height/2.0f), m_Origin(width/2.0f, height/2.0f),
       m_MousePositionEnabled(false),
-      m_Scale(1.0f),
+      m_Zoom(1.0f),
       m_Speed(10.0f)
 {
     if (!m_Canvas.create(width, height))
@@ -25,7 +26,18 @@ void Camera::PollEvents(sf::Event& event)
     case sf::Event::MouseWheelScrolled:
         PollMouseWheelScroll(event.mouseWheelScroll);
         break;
+    case sf::Event::Resized:
+        Resize(event.size.width, event.size.height);
+        break;
     }
+}
+
+void Camera::Resize(float x, float y)
+{
+    m_Scale.x *= x / (float)m_Width;
+    m_Scale.y *= y / (float)m_Height;
+    m_Width = x;
+    m_Height = y;
 }
 
 void Camera::PollKeyPress(sf::Keyboard::Key& key)
@@ -56,21 +68,23 @@ void Camera::PollKeyRelease(sf::Keyboard::Key& key)
 
 void Camera::PollMouseWheelScroll(sf::Event::MouseWheelScrollEvent& wheel)
 {
-    float oldScale = m_Scale;
+    float oldZoom = m_Zoom;
     if (wheel.delta < 0)
     {
-        m_Scale *= 0.95f;
+        m_Zoom *= 0.95f;
         m_Speed /= 0.95f;
     }
     else
     {
-        m_Scale *= 1.05f;
+        m_Zoom *= 1.05f;
         m_Speed /= 1.05f;
     }
     if (m_MousePositionEnabled)
     {
         sf::Vector2f posDiff(wheel.x - m_Width/2.0f, wheel.y - m_Height/2.0f);
-        sf::Vector2f offset = posDiff *(1/oldScale - 1/m_Scale);
+        sf::Vector2f offset = posDiff *(1/oldZoom - 1/m_Zoom);
+        offset.x /= m_Scale.x;
+        offset.y /= m_Scale.y;
         m_Origin += offset;
     }
 }
@@ -89,7 +103,7 @@ void Camera::Draw(sf::Drawable& drawable)
 void Camera::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     sf::Sprite canvas(m_Canvas.getTexture());
-    canvas.setScale(m_Scale, m_Scale);
+    canvas.setScale(m_Zoom, m_Zoom);
     canvas.setOrigin(m_Origin);
     canvas.setPosition(m_Position);
 

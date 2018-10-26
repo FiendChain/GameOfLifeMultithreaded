@@ -23,6 +23,7 @@ class App
     private:
         void PollEvents();
         void PollKeyPresses(sf::Keyboard::Key& key);
+        void Resize(float x, float y);
         void Update();
         void Render();
 };

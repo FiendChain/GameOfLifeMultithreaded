@@ -7,14 +7,15 @@ class Camera: public sf::Drawable
     private:
         sf::RenderTexture m_Canvas;
         unsigned int m_Width, m_Height;
-        sf::Vector2f m_Position, m_Origin;
+        sf::Vector2f m_Position, m_Origin, m_Scale;
         bool m_MousePositionEnabled;
-        float m_Scale, m_Speed;
+        float m_Zoom, m_Speed;
     public:
         Camera(unsigned int width, unsigned int height);
         void PollEvents(sf::Event& event);
         void Clear(const sf::Color& colour);
         void Draw(sf::Drawable& drawable);
+        void Resize(float x, float y);
     private:
         void PollKeyPress(sf::Keyboard::Key& key);
         void PollKeyRelease(sf::Keyboard::Key& key);

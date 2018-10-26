@@ -43,6 +43,15 @@ void App::PollEvents()
     }
 }
 
+void App::Resize(float x, float y) 
+{
+    sf::View view = m_Window.getView();
+    m_Width = x;
+    m_Height = y;
+    view.setSize(x, y);
+    m_Window.setView(view);
+}
+
 void App::PollKeyPresses(sf::Keyboard::Key& key)
 {
     switch (key)
