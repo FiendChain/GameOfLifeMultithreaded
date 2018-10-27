@@ -25,7 +25,7 @@ class GOL: public sf::Drawable
         std::vector<std::function<void(const GOLFunc&)>> m_ThreadFunctions;
         const int m_TotalThreads;
     public:
-        GOL(unsigned int width, unsigned int height);
+        GOL(unsigned int width, unsigned int height, unsigned int totalThreads);
         template <class RNG>
         void Randomise(RNG& engine, float threshold);
         void Update(const GOLFunc& func = (rules::Default));

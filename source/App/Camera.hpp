@@ -8,7 +8,8 @@ class Camera: public sf::Drawable
         sf::RenderTexture m_Canvas;
         unsigned int m_Width, m_Height;
         sf::Vector2f m_Position, m_Origin, m_Scale;
-        bool m_MousePositionEnabled;
+        bool m_MousePositionEnabled, m_DragWithMouse;
+        sf::Vector2i m_LastMousePosition;
         float m_Zoom, m_Speed;
     public:
         Camera(unsigned int width, unsigned int height);

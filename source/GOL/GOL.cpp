@@ -6,13 +6,13 @@
 namespace gol
 {
 
-GOL::GOL(unsigned int width, unsigned int height)
+GOL::GOL(unsigned int width, unsigned int height, unsigned int totalThreads)
     : m_Width(width), m_Height(height),
       m_Grid(std::make_unique<GOLGrid>(width, height)),
       m_Buffer(std::make_unique<GOLGrid>(width, height)),
-      m_ThreadPool(std::thread::hardware_concurrency()-1),
+      m_ThreadPool(totalThreads),
       m_ThreadFunctions(0),
-      m_TotalThreads(std::thread::hardware_concurrency()-1)
+      m_TotalThreads(totalThreads)
 {
     if (m_TotalThreads <= 0)
         throw std::runtime_error("Couldn't create threads for GOL");

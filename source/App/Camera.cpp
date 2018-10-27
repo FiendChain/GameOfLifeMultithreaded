@@ -5,7 +5,7 @@ Camera::Camera(unsigned int width, unsigned int height)
     : m_Width(width), m_Height(height),
       m_Scale(1.0f, 1.0f),
       m_Position(width/2.0f, height/2.0f), m_Origin(width/2.0f, height/2.0f),
-      m_MousePositionEnabled(false),
+      m_MousePositionEnabled(false), m_DragWithMouse(false),
       m_Zoom(1.0f),
       m_Speed(10.0f)
 {
@@ -25,6 +25,29 @@ void Camera::PollEvents(sf::Event& event)
         break;
     case sf::Event::MouseWheelScrolled:
         PollMouseWheelScroll(event.mouseWheelScroll);
+        break;
+    case sf::Event::MouseMoved:
+        if (m_DragWithMouse)
+        {
+            sf::Vector2i mousePos(event.mouseMove.x, event.mouseMove.y);
+            sf::Vector2f posDiff(mousePos.x-m_LastMousePosition.x, mousePos.y-m_LastMousePosition.y);
+            m_LastMousePosition = mousePos;
+
+            sf::Vector2f offset = posDiff / m_Zoom;
+            m_Origin -= offset;
+        }
+        break;
+    case sf::Event::MouseButtonPressed:
+        if (event.mouseButton.button == sf::Mouse::Button::Middle)
+        {
+            m_LastMousePosition.x = event.mouseButton.x;
+            m_LastMousePosition.y = event.mouseButton.y;
+            m_DragWithMouse = true;
+        }
+        break;
+    case sf::Event::MouseButtonReleased:
+        if (event.mouseButton.button == sf::Mouse::Button::Middle)
+            m_DragWithMouse = false;
         break;
     case sf::Event::Resized:
         Resize(event.size.width, event.size.height);

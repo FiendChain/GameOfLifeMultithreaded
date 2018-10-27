@@ -7,7 +7,7 @@ App::App(unsigned int width, unsigned int height, unsigned int fps)
     : m_Width(width), m_Height(height),
       m_Fps(fps),
       m_Window(sf::VideoMode(width, height), "Game of Life"),
-      m_GOL(width, height),
+      m_GOL(width, height, std::thread::hardware_concurrency()-1),
       m_Camera(width, height),
       m_Paused(false)
 { 
