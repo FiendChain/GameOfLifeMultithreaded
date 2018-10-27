@@ -3,113 +3,44 @@
 
 Camera::Camera(unsigned int width, unsigned int height)
     : m_Width(width), m_Height(height),
-      m_Scale(1.0f, 1.0f),
       m_Position(width/2.0f, height/2.0f), m_Origin(width/2.0f, height/2.0f),
-      m_MousePositionEnabled(false), m_DragWithMouse(false),
-      m_Zoom(1.0f),
-      m_Speed(10.0f)
+      m_Zoom(1.0f)
 {
     if (!m_Canvas.create(width, height))
         throw std::runtime_error("Couldn't create rendertexture canvas");
 }
 
-void Camera::PollEvents(sf::Event& event)
+void Camera::SetZoom(float zoom)
 {
-    switch (event.type)
+    if (zoom > 0) 
     {
-    case sf::Event::KeyPressed:
-        PollKeyPress(event.key.code);
-        break;
-    case sf::Event::KeyReleased:
-        PollKeyRelease(event.key.code);
-        break;
-    case sf::Event::MouseWheelScrolled:
-        PollMouseWheelScroll(event.mouseWheelScroll);
-        break;
-    case sf::Event::MouseMoved:
-        if (m_DragWithMouse)
-        {
-            sf::Vector2i mousePos(event.mouseMove.x, event.mouseMove.y);
-            sf::Vector2f posDiff(mousePos.x-m_LastMousePosition.x, mousePos.y-m_LastMousePosition.y);
-            m_LastMousePosition = mousePos;
+        m_Zoom = zoom;
+    }
+}
 
-            sf::Vector2f offset = posDiff / m_Zoom;
-            m_Origin -= offset;
-        }
+void Camera::Translate(Move move, float distance)
+{
+    switch (move)
+    {
+    case Move::Up:
+        m_Origin.y -= distance; 
         break;
-    case sf::Event::MouseButtonPressed:
-        if (event.mouseButton.button == sf::Mouse::Button::Middle)
-        {
-            m_LastMousePosition.x = event.mouseButton.x;
-            m_LastMousePosition.y = event.mouseButton.y;
-            m_DragWithMouse = true;
-        }
+    case Move::Down:
+        m_Origin.y += distance; 
         break;
-    case sf::Event::MouseButtonReleased:
-        if (event.mouseButton.button == sf::Mouse::Button::Middle)
-            m_DragWithMouse = false;
+    case Move::Left:
+        m_Origin.x -= distance; 
         break;
-    case sf::Event::Resized:
-        Resize(event.size.width, event.size.height);
+    case Move::Right:
+        m_Origin.x += distance; 
         break;
     }
 }
 
-void Camera::Resize(float x, float y)
+void Camera::Translate(float x, float y)
 {
-    m_Scale.x *= x / (float)m_Width;
-    m_Scale.y *= y / (float)m_Height;
-    m_Width = x;
-    m_Height = y;
-}
-
-void Camera::PollKeyPress(sf::Keyboard::Key& key)
-{
-    switch (key)
-    {
-    case sf::Keyboard::W:
-        m_Origin.y -= m_Speed; break;
-    case sf::Keyboard::S:
-        m_Origin.y += m_Speed; break;
-    case sf::Keyboard::A:
-        m_Origin.x -= m_Speed; break;
-    case sf::Keyboard::D:
-        m_Origin.x += m_Speed; break;
-    case sf::Keyboard::LControl:
-        m_MousePositionEnabled = true; break;
-    }
-}
-
-void Camera::PollKeyRelease(sf::Keyboard::Key& key)
-{
-    switch (key)
-    {
-    case sf::Keyboard::LControl:
-        m_MousePositionEnabled = false; break;
-    }
-}
-
-void Camera::PollMouseWheelScroll(sf::Event::MouseWheelScrollEvent& wheel)
-{
-    float oldZoom = m_Zoom;
-    if (wheel.delta < 0)
-    {
-        m_Zoom *= 0.95f;
-        m_Speed /= 0.95f;
-    }
-    else
-    {
-        m_Zoom *= 1.05f;
-        m_Speed /= 1.05f;
-    }
-    if (m_MousePositionEnabled)
-    {
-        sf::Vector2f posDiff(wheel.x - m_Width/2.0f, wheel.y - m_Height/2.0f);
-        sf::Vector2f offset = posDiff *(1/oldZoom - 1/m_Zoom);
-        offset.x /= m_Scale.x;
-        offset.y /= m_Scale.y;
-        m_Origin += offset;
-    }
+    m_Origin.x += x;
+    m_Origin.y += y;
 }
 
 void Camera::Clear(const sf::Color& colour) 
@@ -121,7 +52,6 @@ void Camera::Draw(sf::Drawable& drawable)
 {
     m_Canvas.draw(drawable);
 }
-
 
 void Camera::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {

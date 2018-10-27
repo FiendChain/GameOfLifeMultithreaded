@@ -21,7 +21,8 @@ target_link_libraries(GOL sfml-graphics sfml-audio sfml-window sfml-system)
 
 set(APP_FILES
     ${APP_DIR}/App.cpp
-    ${APP_DIR}/Camera.cpp)
+    ${APP_DIR}/Camera.cpp
+    ${APP_DIR}/ControllableCamera.cpp)
 
 add_library(App ${APP_FILES})
 target_compile_options(App PUBLIC -std=c++17 -O3 -pthread)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GOL/GOL.hpp"
-#include "Camera.hpp"
+#include "ControllableCamera.hpp"
 
 #include <SFML/Graphics.hpp>
 #include <random>
@@ -13,7 +13,7 @@ class App
         const unsigned int m_Fps;
         bool m_Paused;
         sf::RenderWindow m_Window;
-        Camera m_Camera;
+        ControllableCamera m_Camera;
         sf::Clock m_Clock;
         std::default_random_engine m_RngEngine;
         gol::GOL m_GOL;
